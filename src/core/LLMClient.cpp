@@ -171,12 +171,6 @@ void LLMClient::chatStream(const std::vector<Message>& history,
                             std::string token = delta["content"].get<std::string>();
                             if (!token.empty()) {
                                 if (onToken) onToken(token);
-
-                                // 同时发 Qt 信号(utf-8 → QString),给 UI 层跨线程用
-                                // 注意:emit 运行在 httplib 工作线程,UI 层需用 QueuedConnection 接收
-                                auto qtoken = QString::fromUtf8(token.c_str(),
-                                                                 static_cast<int>(token.size()));
-                                emit tokenReceived(qtoken);
                             }
                         }
                     }

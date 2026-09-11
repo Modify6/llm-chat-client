@@ -3,6 +3,7 @@
 #include <QScrollArea>
 #include <QWidget>
 #include <QVBoxLayout>
+#include <QResizeEvent>
 
 #include "ui/ChatBubble.h"
 
@@ -25,16 +26,20 @@ public:
     /// 清空所有气泡
     void clearAll();
 
-    /// 是否有未完成的 AI 回复(用于流式状态判断)
+    /// 是否有未完成的 AI 回复
     bool hasActiveAssistant() const { return m_activeAssistant != nullptr; }
 
-    /// 标记当前流式 AI 气泡结束(从 active 置空)
+    /// 标记当前流式 AI 气泡结束
     void finishAssistant() { m_activeAssistant = nullptr; }
 
+protected:
+    void resizeEvent(QResizeEvent* event) override;
+
 private:
-    QWidget* m_content;              ///< scroll area 内部内容 widget
-    QVBoxLayout* m_layout;           ///< 垂直布局
-    ChatBubble* m_activeAssistant;   ///< 当前正在流式追加的 AI 气泡(非流式时为 nullptr)
+    QWidget* m_content;
+    QVBoxLayout* m_layout;
+    ChatBubble* m_activeAssistant;
 
     void scrollToBottom();
+    void updateAllBubbleWidths();
 };

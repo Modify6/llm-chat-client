@@ -37,7 +37,7 @@ ChatBubble[role="user"] {
     border: 1px solid #388E3C;
 }
 
-ChatBubble[role="user"] QLabel {
+ChatBubble[role="user"] QTextBrowser {
     color: #FFFFFF;
     border: none;
     background: transparent;
@@ -49,12 +49,16 @@ ChatBubble[role="assistant"] {
     border: 1px solid #BDBDBD;
 }
 
-ChatBubble[role="assistant"] QLabel {
+ChatBubble[role="assistant"] QTextBrowser {
     color: #212121;
     border: none;
     background: transparent;
     font-size: 13px;
 }
+
+/* 注意:markdown 内部元素(pre/code/h1/a 等)的样式
+ * 通过 ChatBubble.cpp 里的 kMarkdownHtmlStyle 注入,
+ * QSS 选择器无法穿透 QTextBrowser 的 HTML DOM。 */
 
 /* ============================================
    聊天区
