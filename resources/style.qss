@@ -1,0 +1,286 @@
+/*
+ * LLM Chat Client 全局样式表
+ * 柔和浅灰配色,深色文字,高对比度
+ */
+
+/* ============================================
+   全局默认文字颜色(强制深黑)
+   ============================================ */
+QWidget {
+    color: #212121;
+    font-size: 13px;
+}
+
+/* ============================================
+   主窗口
+   ============================================ */
+QMainWindow {
+    background: #ECECEC;
+}
+
+QStatusBar {
+    background: #E0E0E0;
+    border-top: 1px solid #BDBDBD;
+    color: #212121;
+}
+
+/* ============================================
+   聊天气泡
+   ============================================ */
+ChatBubble {
+    border-radius: 12px;
+    padding: 8px 14px;
+}
+
+ChatBubble[role="user"] {
+    background: #4CAF50;
+    border: 1px solid #388E3C;
+}
+
+ChatBubble[role="user"] QLabel {
+    color: #FFFFFF;
+    border: none;
+    background: transparent;
+    font-size: 13px;
+}
+
+ChatBubble[role="assistant"] {
+    background: #FFFFFF;
+    border: 1px solid #BDBDBD;
+}
+
+ChatBubble[role="assistant"] QLabel {
+    color: #212121;
+    border: none;
+    background: transparent;
+    font-size: 13px;
+}
+
+/* ============================================
+   聊天区
+   ============================================ */
+#chatView {
+    border: none;
+    background: #ECECEC;
+}
+
+#chatView QScrollArea {
+    border: none;
+    background: #ECECEC;
+}
+
+#chatContent {
+    background: #ECECEC;
+}
+
+QScrollBar:vertical {
+    background: transparent;
+    width: 10px;
+    margin: 2px 2px 2px 0;
+}
+
+QScrollBar::handle:vertical {
+    background: #BDBDBD;
+    border-radius: 5px;
+    min-height: 20px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #9E9E9E;
+}
+
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
+    height: 0;
+}
+
+/* ============================================
+   输入框
+   ============================================ */
+InputBox {
+    background: #ECECEC;
+    border-top: 1px solid #BDBDBD;
+}
+
+QTextEdit {
+    border: 1px solid #BDBDBD;
+    border-radius: 8px;
+    padding: 8px 12px;
+    background: #FFFFFF;
+    color: #212121;
+    font-size: 13px;
+    selection-background-color: #4CAF50;
+    selection-color: #FFFFFF;
+}
+
+QTextEdit:focus {
+    border-color: #4CAF50;
+}
+
+/* ============================================
+   按钮
+   ============================================ */
+QPushButton {
+    background: #4CAF50;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: bold;
+    min-height: 26px;
+}
+
+QPushButton:hover {
+    background: #43A047;
+}
+
+QPushButton:pressed {
+    background: #388E3C;
+}
+
+QPushButton:disabled {
+    background: #BDBDBD;
+    color: #EEEEEE;
+}
+
+/* 次要按钮(清空、测试连接) */
+QPushButton[role="secondary"] {
+    background: #FFFFFF;
+    color: #212121;
+    border: 1px solid #BDBDBD;
+    font-weight: normal;
+}
+
+QPushButton[role="secondary"]:hover {
+    background: #F5F5F5;
+    border-color: #9E9E9E;
+}
+
+/* 停止按钮 */
+QPushButton[role="stop"] {
+    background: #F44336;
+}
+
+QPushButton[role="stop"]:hover {
+    background: #E53935;
+}
+
+/* ============================================
+   设置对话框
+   ============================================ */
+SettingsDialog {
+    background: #ECECEC;
+}
+
+QGroupBox {
+    border: 1px solid #BDBDBD;
+    border-radius: 8px;
+    margin-top: 14px;
+    padding-top: 16px;
+    font-weight: bold;
+    color: #212121;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 12px;
+    padding: 0 6px;
+    color: #212121;
+    background: #ECECEC;
+}
+
+QLineEdit, QSpinBox, QDoubleSpinBox {
+    border: 1px solid #BDBDBD;
+    border-radius: 4px;
+    padding: 4px 8px;
+    background: #FFFFFF;
+    color: #212121;
+    min-height: 22px;
+}
+
+QLineEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus {
+    border-color: #4CAF50;
+}
+
+QLabel {
+    color: #212121;
+}
+
+/* ============================================
+   压测面板
+   ============================================ */
+StressPanel {
+    background: #ECECEC;
+}
+
+QProgressBar {
+    border: 1px solid #BDBDBD;
+    border-radius: 6px;
+    text-align: center;
+    background: #FFFFFF;
+    color: #212121;
+    min-height: 20px;
+    font-weight: bold;
+}
+
+QProgressBar::chunk {
+    background: #4CAF50;
+    border-radius: 5px;
+}
+
+/* ============================================
+   菜单
+   ============================================ */
+QMenuBar {
+    background: #FFFFFF;
+    border-bottom: 1px solid #BDBDBD;
+    padding: 2px;
+    color: #212121;
+}
+
+QMenuBar::item {
+    padding: 6px 12px;
+    border-radius: 4px;
+    color: #212121;
+}
+
+QMenuBar::item:selected {
+    background: #E8F5E9;
+    color: #2E7D32;
+}
+
+QMenu {
+    background: #FFFFFF;
+    border: 1px solid #BDBDBD;
+    border-radius: 6px;
+    padding: 4px;
+    color: #212121;
+}
+
+QMenu::item {
+    padding: 6px 24px;
+    border-radius: 4px;
+    color: #212121;
+}
+
+QMenu::item:selected {
+    background: #E8F5E9;
+    color: #2E7D32;
+}
+
+/* ============================================
+   DockWidget
+   ============================================ */
+QDockWidget {
+    font-weight: bold;
+    color: #212121;
+    titlebar-close-icon: none;
+}
+
+QDockWidget::title {
+    background: #E0E0E0;
+    border-bottom: 1px solid #BDBDBD;
+    padding: 6px 12px;
+    color: #212121;
+}

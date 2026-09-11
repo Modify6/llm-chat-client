@@ -1,0 +1,35 @@
+# LLM Chat Client - AI 编码规则
+
+## 技术栈锁定
+- C++17, MSVC v143, Windows x64
+- Qt 6.7.0 (Widgets + Concurrent), CMake 3.31+
+- HTTP: cpp-httplib 单头文件 (纯 HTTP,不启用 OpenSSL)
+- JSON: nlohmann/json 单头文件
+- 禁止:Boost,QML,Qt5,QMake,RapidJSON,JsonCpp
+
+## 编码规范
+- 类 PascalCase,成员 m_camelCase,函数 camelCase
+- 头文件 #pragma once,不写 using namespace
+- 资源管理:unique_ptr/shared_ptr + Qt 父子机制,禁止裸 new/delete
+- UI 操作必须在主线程,HTTP 请求必须在工作线程
+- 跨线程通信:信号槽 + Qt::QueuedConnection
+- 取消标志:std::atomic<bool>
+- 错误处理:不允许空 catch(...),必须回调 onError
+- 日志:Logger 统一输出
+
+## 构建
+- CMake 配置:-DQT_PREFIX_PATH=D:/gd/llama/Qt/6.7.0/msvc2019_64
+- httplib Windows 链接库:ws2_32 crypt32
+- 产物:Release x64,WIN32 子系统(无控制台)
+- 部署:windeployqt --release --no-translations
+
+## 项目结构
+- src/core/  纯 C++ 核心层(Message, SSEParser, LLMClient, ChatSession)
+- src/ui/    Qt Widgets 界面层
+- src/stress/ 压测模块
+- src/utils/ 工具层(ConfigManager, Logger)
+- third_party/ 单头文件依赖
+
+## Git 提交
+- 禁止提交 build/、*.user、临时文件
+- 禁止提交 third_party/ 以外的二进制
