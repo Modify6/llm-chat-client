@@ -80,6 +80,23 @@ target_link_libraries(llm-chat-client PRIVATE
 # httplib 在 Windows 上需要的系统库(Winsock / 加密 API)
 if(WIN32)
     target_link_libraries(llm-chat-client PRIVATE ws2_32 crypt32)
+
+    # ====== POST_BUILD:自动部署 Qt DLL + 资源 ======
+    # windeployqt 能扫到大部分 DLL,但 QtConcurrent(模板库)扫不到,需手动补
+    # 同时把 resources/style.qss 复制到 exe 旁边
+    find_program(WINDEPLOYQT_EXE windeployqt HINTS ${QT_PREFIX_PATH}/bin)
+    add_custom_command(TARGET llm-chat-client POST_BUILD
+        COMMAND ${WINDEPLOYQT_EXE} $<TARGET_FILE:llm-chat-client> --release --no-translations
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${QT_PREFIX_PATH}/bin/Qt6Concurrent.dll"
+                "$<TARGET_FILE_DIR:llm-chat-client>"
+        COMMAND ${CMAKE_COMMAND} -E make_directory
+                "$<TARGET_FILE_DIR:llm-chat-client>/resources"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${CMAKE_SOURCE_DIR}/resources/style.qss"
+                "$<TARGET_FILE_DIR:llm-chat-client>/resources/style.qss"
+        COMMENT "部署 Qt 运行库 + 资源文件"
+    )
 endif()
 
 # ====== 单元测试 ======
