@@ -68,6 +68,7 @@ private slots:
     void onOpenSettings();       ///< 连接配置对话框
     void onOpenStressPanel();    ///< 显示/激活右侧并发压测 Dock
     void onNewChat();            ///< 【新对话】清 session + 清 ChatView(快捷键 Ctrl+N)
+    void onCopyAll();            ///< 【复制全部对话】收集所有气泡拼成 transcript 写入剪贴板
 
     /** 定时 healthCheck,更新右下角连接状态标签(每 30s) */
     void onConnectionCheck();

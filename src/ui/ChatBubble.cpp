@@ -3,6 +3,11 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QRegularExpression>
+#include <QMenu>
+#include <QContextMenuEvent>
+#include <QApplication>
+#include <QClipboard>
+#include <QMessageBox>
 
 /**
  * 简单的 Markdown → HTML 转换器
@@ -204,4 +209,76 @@ void ChatBubble::renderContent() {
     // 但需要通知布局系统尺寸变了
     m_label->updateGeometry();
     updateGeometry();
+}
+
+// =====================================================================
+// 复制功能:右键菜单
+// =====================================================================
+
+/**
+ * @brief 从 Markdown 文本里提取所有 ```...``` 代码块内容
+ *
+ * 支持两种 fence:
+ *   ```cpp\ncode here\n```   (带语言标记)
+ *   ```\ncode here\n```       (无语言标记)
+ *
+ * @return 所有代码块拼接,块之间用 \n\n 分隔;无代码块时返回空字符串
+ */
+static QString extractCodeBlocks(const QString& markdown) {
+    QStringList blocks;
+    // 正则:``` 可选语言标记 换行 捕获直到下一个 ```
+    QRegularExpression re("```(?:\\w+)?\\n([\\s\\S]*?)```");
+    auto it = re.globalMatch(markdown);
+    while (it.hasNext()) {
+        QRegularExpressionMatch match = it.next();
+        QString code = match.captured(1).trimmed();
+        if (!code.isEmpty()) {
+            blocks.append(code);
+        }
+    }
+    return blocks.join("\n\n");
+}
+
+/**
+ * @brief 右键菜单
+ *
+ * 用户气泡:
+ *   └─ 复制消息
+ *
+ * AI 气泡:
+ *   ├─ 复制消息
+ *   └─ 复制所有代码块(若无代码块则灰掉)
+ */
+void ChatBubble::contextMenuEvent(QContextMenuEvent* event) {
+    QMenu menu(this);
+
+    // --- 复制消息(所有气泡都有) ---
+    QAction* actCopyMsg = menu.addAction("复制消息");
+    actCopyMsg->setShortcut(QKeySequence::Copy);
+
+    // --- 复制代码块(仅 AI 气泡) ---
+    QAction* actCopyCode = nullptr;
+    if (m_role == Role::Assistant) {
+        QString code = extractCodeBlocks(m_rawText);
+        actCopyCode = menu.addAction("复制所有代码块");
+        actCopyCode->setEnabled(!code.isEmpty());   // 无代码块时灰掉
+        if (code.isEmpty()) {
+            actCopyCode->setToolTip("这条回复里没有代码块");
+        }
+    }
+
+    // 弹出菜单,等待用户选择
+    QAction* chosen = menu.exec(event->globalPos());
+    if (!chosen) return;
+
+    QClipboard* cb = QApplication::clipboard();
+
+    if (chosen == actCopyMsg) {
+        cb->setText(m_rawText);
+    } else if (chosen == actCopyCode) {
+        QString code = extractCodeBlocks(m_rawText);
+        if (!code.isEmpty()) {
+            cb->setText(code);
+        }
+    }
 }

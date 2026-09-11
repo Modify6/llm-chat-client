@@ -46,6 +46,8 @@
 #include <QMenu>
 #include <QAction>
 #include <QDockWidget>
+#include <QApplication>
+#include <QClipboard>
 
 // =====================================================================
 // 构造 / 析构
@@ -119,6 +121,18 @@ MainWindow::~MainWindow() = default;
 
 void MainWindow::setupMenuBar() {
     auto* menuBar = this->menuBar();
+
+    // === 编辑菜单 ===
+    // 提供"复制全部对话"—— 一键把当前 ChatView 里所有气泡拼成 transcript
+    auto* editMenu = menuBar->addMenu("编辑(&E)");
+
+    auto* copyAllAction = new QAction("复制全部对话(A)", this);
+    copyAllAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_C));
+    copyAllAction->setStatusTip("复制当前所有对话到剪贴板");
+    connect(copyAllAction, &QAction::triggered, this, &MainWindow::onCopyAll);
+    editMenu->addAction(copyAllAction);
+
+    // === 设置菜单 ===
     auto* settingsMenu = menuBar->addMenu("设置(&S)");
 
     // 【新对话】—— 清空 session + ChatView
@@ -170,6 +184,42 @@ void MainWindow::onNewChat() {
     m_session->clear();
     m_session->setSystemPrompt("You are a helpful assistant.");
     m_chatView->clearAll();
+}
+
+/**
+ * @brief 复制全部对话到剪贴板
+ *
+ * 格式示例:
+ *   【用户】
+ *   帮我写一个 C++ 智能指针
+ *
+ *   【AI】
+ *   好的,这里是一个简单的智能指针实现:...
+ *   ```cpp
+ *   template<typename T>
+ *   class UniquePtr { ... };
+ *   ```
+ *
+ * 实现:遍历 ChatView::allBubbles()(维护 row→bubble 结构),
+ *       取每个 ChatBubble::rawText() 拼成 transcript。
+ */
+void MainWindow::onCopyAll() {
+    auto bubbles = m_chatView->allBubbles();
+    if (bubbles.isEmpty()) return;
+
+    QStringList transcript;
+    for (ChatBubble* bubble : bubbles) {
+        QString roleLabel = (bubble->role() == ChatBubble::Role::User)
+            ? QStringLiteral("用户")
+            : QStringLiteral("AI");
+        QString text = bubble->rawText().trimmed();
+        if (text.isEmpty()) continue;   // 跳过流式中的空气泡
+        transcript.append(QString("【%1】\n%2").arg(roleLabel, text));
+    }
+
+    if (transcript.isEmpty()) return;
+
+    QApplication::clipboard()->setText(transcript.join("\n\n"));
 }
 
 // =====================================================================

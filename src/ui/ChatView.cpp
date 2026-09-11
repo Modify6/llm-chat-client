@@ -126,3 +126,25 @@ void ChatView::scrollToBottom() {
     QScrollBar* sb = verticalScrollBar();
     sb->setValue(sb->maximum());
 }
+
+QList<ChatBubble*> ChatView::allBubbles() const {
+    QList<ChatBubble*> result;
+    // 复用 updateAllBubbleWidths 的遍历逻辑:
+    // ChatView → VBoxLayout(rows) → 每个 row 是 HBoxLayout → 里面一个 ChatBubble
+    for (int i = 0; i < m_layout->count(); ++i) {
+        QLayoutItem* rowItem = m_layout->itemAt(i);
+        if (!rowItem) continue;
+        QLayout* rowLayout = rowItem->layout();
+        if (!rowLayout) continue;
+
+        for (int j = 0; j < rowLayout->count(); ++j) {
+            QWidget* w = rowLayout->itemAt(j)->widget();
+            if (!w) continue;
+            auto* bubble = qobject_cast<ChatBubble*>(w);
+            if (bubble) {
+                result.append(bubble);
+            }
+        }
+    }
+    return result;
+}
